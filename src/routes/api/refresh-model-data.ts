@@ -21,7 +21,7 @@ const FIELDS = [
   "value",
 ] as const;
 
-type RawModelRow = Record<(typeof FIELDS)[number], string | null>;
+type RawModelRow = Record<(typeof FIELDS)[number], string | null> & { model_name: string };
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

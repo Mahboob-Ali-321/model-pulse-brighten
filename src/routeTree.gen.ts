@@ -14,6 +14,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExplorerRouteImport } from './routes/explorer'
+import { Route as ApiRefreshModelDataRouteImport } from './routes/api/refresh-model-data'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const ExplorerRoute = ExplorerRouteImport.update({
   path: '/explorer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRefreshModelDataRoute = ApiRefreshModelDataRouteImport.update({
+  id: '/api/refresh-model-data',
+  path: '/api/refresh-model-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/explorer': typeof ExplorerRoute
+  '/api/refresh-model-data': typeof ApiRefreshModelDataRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/explorer': typeof ExplorerRoute
+  '/api/refresh-model-data': typeof ApiRefreshModelDataRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,33 @@ export interface FileRoutesById {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/explorer': typeof ExplorerRoute
+  '/api/refresh-model-data': typeof ApiRefreshModelDataRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/calculator' | '/compare' | '/explorer'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/calculator'
+    | '/compare'
+    | '/explorer'
+    | '/api/refresh-model-data'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/calculator' | '/compare' | '/explorer'
-  id: '__root__' | '/' | '/analytics' | '/calculator' | '/compare' | '/explorer'
+  to:
+    | '/'
+    | '/analytics'
+    | '/calculator'
+    | '/compare'
+    | '/explorer'
+    | '/api/refresh-model-data'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/calculator'
+    | '/compare'
+    | '/explorer'
+    | '/api/refresh-model-data'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +105,7 @@ export interface RootRouteChildren {
   CalculatorRoute: typeof CalculatorRoute
   CompareRoute: typeof CompareRoute
   ExplorerRoute: typeof ExplorerRoute
+  ApiRefreshModelDataRoute: typeof ApiRefreshModelDataRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExplorerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/refresh-model-data': {
+      id: '/api/refresh-model-data'
+      path: '/api/refresh-model-data'
+      fullPath: '/api/refresh-model-data'
+      preLoaderRoute: typeof ApiRefreshModelDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   CalculatorRoute: CalculatorRoute,
   CompareRoute: CompareRoute,
   ExplorerRoute: ExplorerRoute,
+  ApiRefreshModelDataRoute: ApiRefreshModelDataRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
