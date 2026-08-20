@@ -115,7 +115,7 @@ export const Route = createFileRoute("/api/refresh-model-data")({
         try {
           // 1. Trigger a new collector run.
           const triggerResponse = await fetch(
-            `https://api.brightdata.com/dca/trigger?collector=${COLLECTOR_ID}&queue_next=1`,
+            `https://api.brightdata.com/dca/trigger?collector=${COLLECTOR_ID}&queue_next=1&override_incompatible_schema=1`,
             {
               method: "POST",
               headers: {
