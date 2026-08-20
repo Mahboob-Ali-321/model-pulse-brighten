@@ -98,11 +98,26 @@ function normalize(raw: RawModel): Model | null {
   };
 }
 
+/**
+ * Optional live dataset (e.g. rows pulled from the Supabase `models` table).
+ * When set it replaces the bundled snapshot; when null we fall back to it.
+ */
+let rawOverride: RawScrapePage[] | null = null;
+
 function loadRaw(): RawScrapePage[] {
-  return rawData as RawScrapePage[];
+  return rawOverride ?? (rawData as RawScrapePage[]);
 }
 
 let cache: Model[] | null = null;
+
+/** Swap in a live dataset (or pass null to return to the bundled snapshot). */
+export function setRawOverride(models: RawModel[] | null): void {
+  rawOverride =
+    models && models.length
+      ? [{ models, input: { url: getSourceUrl() } }]
+      : null;
+  cache = null;
+}
 
 export function getModels(): Model[] {
   if (cache) return cache;

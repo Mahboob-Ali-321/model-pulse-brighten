@@ -20,6 +20,7 @@ import {
   valueScore,
   type RecommendationResult,
 } from "@/services/modelService";
+import { useDataVersion } from "@/services/dataSource";
 import { formatUsd, parseTokenInput } from "@/lib/format";
 
 export const Route = createFileRoute("/calculator")({
@@ -66,7 +67,8 @@ const CONTEXT_OPTIONS = [
 ];
 
 function CalculatorPage() {
-  const models = useMemo(() => getModels(), []);
+  const dataVersion = useDataVersion();
+  const models = useMemo(() => getModels(), [dataVersion]);
   const [modelId, setModelId] = useState(models[0]?.id ?? "");
   const [inputTokens, setInputTokens] = useState("10000000");
   const [outputTokens, setOutputTokens] = useState("2000000");

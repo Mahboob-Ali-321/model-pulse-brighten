@@ -13,6 +13,7 @@ import {
 import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable } from "@/components/ModelTable";
 import { getModels, getProviders, valueScore } from "@/services/modelService";
+import { useDataVersion } from "@/services/dataSource";
 import type { Model } from "@/types/model";
 
 export const Route = createFileRoute("/explorer")({
@@ -53,8 +54,9 @@ const CONTEXT_BANDS = [
 ] as const;
 
 function Explorer() {
-  const allModels = useMemo(() => getModels(), []);
-  const providers = useMemo(() => getProviders(), []);
+  const dataVersion = useDataVersion();
+  const allModels = useMemo(() => getModels(), [dataVersion]);
+  const providers = useMemo(() => getProviders(), [dataVersion]);
 
   const [query, setQuery] = useState("");
   const [provider, setProvider] = useState("all");
