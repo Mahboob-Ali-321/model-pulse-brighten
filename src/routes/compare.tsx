@@ -13,6 +13,7 @@ import {
 } from "@/components/kit";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
 import { estimateCost, getModels, valueScore } from "@/services/modelService";
+import { useDataVersion } from "@/services/dataSource";
 import { formatUsd, parseTokenInput } from "@/lib/format";
 import type { Model } from "@/types/model";
 
@@ -40,7 +41,8 @@ const MAX = 4;
 type WinnerKey = "price" | "quality" | "speed" | "value" | "context";
 
 function Compare() {
-  const models = useMemo(() => getModels(), []);
+  const dataVersion = useDataVersion();
+  const models = useMemo(() => getModels(), [dataVersion]);
   const [ids, setIds] = useState<string[]>(() => models.slice(0, 3).map((m) => m.id));
   const [query, setQuery] = useState("");
   const [inputTokens, setInputTokens] = useState("10000000");

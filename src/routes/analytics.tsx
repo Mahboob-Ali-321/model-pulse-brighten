@@ -15,6 +15,7 @@ import {
 import { Panel, SectionHeading } from "@/components/kit";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
 import { getModels, getStatistics, valueScore } from "@/services/modelService";
+import { useDataVersion } from "@/services/dataSource";
 import { formatCompact } from "@/lib/format";
 import type { Model } from "@/types/model";
 
@@ -63,8 +64,9 @@ function bucketize(values: number[], edges: number[], format: (n: number) => str
 }
 
 function Analytics() {
-  const models = useMemo(() => getModels(), []);
-  const stats = useMemo(() => getStatistics(), []);
+  const dataVersion = useDataVersion();
+  const models = useMemo(() => getModels(), [dataVersion]);
+  const stats = useMemo(() => getStatistics(), [dataVersion]);
 
   const priceOf = (m: Model, kind: "in" | "out") => {
     const metric = kind === "in" ? m.inputPrice : m.outputPrice;

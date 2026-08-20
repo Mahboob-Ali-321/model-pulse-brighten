@@ -7,6 +7,8 @@ import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable, type BadgeKind } from "@/components/ModelTable";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
 import { getModels, getStatistics, valueScore } from "@/services/modelService";
+import { useDataVersion } from "@/services/dataSource";
+import { RefreshDataButton } from "@/components/RefreshDataButton";
 import { formatCompact, formatPrice1M } from "@/lib/format";
 import type { Model } from "@/types/model";
 
@@ -31,8 +33,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const stats = useMemo(() => getStatistics(), []);
-  const models = useMemo(() => getModels(), []);
+  const dataVersion = useDataVersion();
+  const stats = useMemo(() => getStatistics(), [dataVersion]);
+  const models = useMemo(() => getModels(), [dataVersion]);
   const [selected, setSelected] = useState<Model | null>(null);
 
   const bestValue = useMemo(() => {
@@ -58,6 +61,7 @@ function Dashboard() {
 
   return (
     <div className="pt-10">
+      <RefreshDataButton />
       <section
         className="relative overflow-hidden rounded-3xl border border-border p-6 sm:p-12"
         style={{ backgroundImage: "var(--gradient-hero)" }}
