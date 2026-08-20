@@ -67,25 +67,36 @@ export interface RefreshResult {
 
 /** Triggers the `refresh-model-data` edge function (Bright Data scrape). */
 export async function triggerRefresh(): Promise<RefreshResult> {
-  const { data, error } = await supabase.functions.invoke<RefreshResult>("refresh-model-data", {
-    body: {},
+  const failure = (error: string): RefreshResult => ({
+    success: false,
+    modelCount: 0,
+    lastRefreshedAt: null,
+    error,
   });
 
-  if (error) {
+  try {
+    const response = await fetch("/api/refresh-model-data", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    const text = await response.text();
+    let payload: Partial<RefreshResult> | null = null;
+    try {
+      payload = JSON.parse(text) as Partial<RefreshResult>;
+    } catch {
+      payload = null;
+    }
+    if (!response.ok || !payload?.success) {
+      return failure(payload?.error ?? `The refresh failed (${response.status}).`);
+    }
     return {
-      success: false,
-      modelCount: 0,
-      lastRefreshedAt: null,
-      error: error.message || "The refresh request failed.",
+      success: true,
+      modelCount: payload.modelCount ?? 0,
+      lastRefreshedAt: payload.lastRefreshedAt ?? null,
+      error: null,
     };
+  } catch (error) {
+    return failure(error instanceof Error ? error.message : "The refresh request failed.");
   }
-  if (!data) {
-    return {
-      success: false,
-      modelCount: 0,
-      lastRefreshedAt: null,
-      error: "The refresh returned no response.",
-    };
-  }
-  return data;
 }
