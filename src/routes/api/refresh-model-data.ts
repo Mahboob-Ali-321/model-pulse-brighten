@@ -52,9 +52,11 @@ function extractModels(payload: unknown): RawModelRow[] {
     const name = asText(row["model_name"] ?? row["model"] ?? row["name"]);
     if (!name || seen.has(name.toLowerCase())) return;
     seen.add(name.toLowerCase());
-    const model = {} as RawModelRow;
-    for (const field of FIELDS) model[field] = asText(row[field]);
-    model.model_name = name;
+    const model = { model_name: name } as RawModelRow;
+    for (const field of FIELDS) {
+      if (field === "model_name") continue;
+      model[field] = asText(row[field]);
+    }
     out.push(model);
   };
 
