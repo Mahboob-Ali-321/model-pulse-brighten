@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_metadata: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      models: {
+        Row: {
+          context_window: string | null
+          created_at: string
+          id: string
+          input_price_per_1m_tokens: string | null
+          max_output: string | null
+          model_name: string
+          output_price_per_1m_tokens: string | null
+          provider: string | null
+          quality: string | null
+          source_url: string | null
+          speed: string | null
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          context_window?: string | null
+          created_at?: string
+          id?: string
+          input_price_per_1m_tokens?: string | null
+          max_output?: string | null
+          model_name: string
+          output_price_per_1m_tokens?: string | null
+          provider?: string | null
+          quality?: string | null
+          source_url?: string | null
+          speed?: string | null
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          context_window?: string | null
+          created_at?: string
+          id?: string
+          input_price_per_1m_tokens?: string | null
+          max_output?: string | null
+          model_name?: string
+          output_price_per_1m_tokens?: string | null
+          provider?: string | null
+          quality?: string | null
+          source_url?: string | null
+          speed?: string | null
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
