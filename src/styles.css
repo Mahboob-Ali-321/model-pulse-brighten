@@ -142,3 +142,109 @@
     color: var(--color-foreground);
   }
 }
+
+/* ModelPulse design system additions */
+@theme inline {
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: oklch(0.14 0.015 285);
+  --foreground: oklch(0.985 0.002 285);
+  --surface: oklch(0.18 0.018 285);
+  --surface-2: oklch(0.22 0.022 288);
+  --card: oklch(0.185 0.018 286);
+  --card-foreground: oklch(0.985 0.002 285);
+  --popover: oklch(0.19 0.02 286);
+  --popover-foreground: oklch(0.985 0.002 285);
+  --primary: oklch(0.62 0.21 295);
+  --primary-foreground: oklch(0.99 0 0);
+  --violet: oklch(0.66 0.2 296);
+  --violet-soft: oklch(0.78 0.11 296);
+  --secondary: oklch(0.24 0.02 288);
+  --secondary-foreground: oklch(0.96 0.003 285);
+  --muted: oklch(0.24 0.018 288);
+  --muted-foreground: oklch(0.68 0.02 288);
+  --accent: oklch(0.28 0.05 295);
+  --accent-foreground: oklch(0.98 0.003 285);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.99 0 0 / 10%);
+  --input: oklch(0.99 0 0 / 14%);
+  --ring: oklch(0.66 0.2 296);
+  --chart-1: oklch(0.66 0.2 296);
+  --chart-2: oklch(0.72 0.15 250);
+  --chart-3: oklch(0.78 0.13 190);
+  --chart-4: oklch(0.8 0.15 90);
+  --chart-5: oklch(0.7 0.19 20);
+  --gradient-hero: radial-gradient(
+      120% 90% at 15% -10%,
+      color-mix(in oklab, var(--violet) 34%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(90% 70% at 92% 0%, color-mix(in oklab, var(--chart-2) 20%, transparent), transparent 62%);
+  --gradient-violet: linear-gradient(135deg, var(--violet), color-mix(in oklab, var(--chart-2) 65%, var(--violet)));
+  --glow-violet: 0 0 0 1px color-mix(in oklab, var(--violet) 26%, transparent),
+    0 20px 60px -24px color-mix(in oklab, var(--violet) 55%, transparent);
+  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 5%) inset, 0 24px 60px -40px oklch(0 0 0 / 80%);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    background-image:
+      linear-gradient(to bottom, color-mix(in oklab, var(--violet) 6%, transparent), transparent 40%),
+      linear-gradient(to right, oklch(1 0 0 / 3.5%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 3.5%) 1px, transparent 1px);
+    background-size: 100% 100%, 64px 64px, 64px 64px;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--violet) 40%, transparent);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--surface) 70%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+@utility text-gradient {
+  background: linear-gradient(120deg, oklch(0.99 0 0), var(--violet-soft) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glow-ring {
+  box-shadow: var(--glow-violet);
+}
+
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
