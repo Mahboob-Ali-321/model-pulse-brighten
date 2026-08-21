@@ -109,7 +109,7 @@ function CalculatorPage() {
   };
 
   return (
-    <div className="pt-10">
+    <div className="page-enter pt-10">
       <SectionHeading
         eyebrow="Calculator"
         title="What will this workload actually cost?"

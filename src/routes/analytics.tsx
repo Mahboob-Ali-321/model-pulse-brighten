@@ -163,7 +163,7 @@ function Analytics() {
   ];
 
   return (
-    <div className="pt-10">
+    <div className="page-enter pt-10">
       <SectionHeading
         eyebrow="Analytics"
         title="How the market is priced"
