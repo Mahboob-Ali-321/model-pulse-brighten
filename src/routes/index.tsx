@@ -80,7 +80,7 @@ function Dashboard() {
         />
 
         <div className="mp-enter" style={{ "--mp-delay": "40ms" } as React.CSSProperties}>
-          <Tag tone="violet" className="mb-6">
+          <Tag tone="violet" className="mb-6 max-w-full whitespace-normal">
             <Sparkles className="size-3" aria-hidden /> {stats.totalModels} models ·{" "}
             {stats.providerCount} providers
           </Tag>
