@@ -447,3 +447,61 @@
     animation: none;
   }
 }
+
+/* ── Continuous horizontal marquee ─────────────────────────────── */
+@keyframes mp-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.mp-marquee {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.mp-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+  gap: var(--mp-gap, 1rem);
+  padding-inline-end: var(--mp-gap, 1rem);
+  animation: mp-marquee var(--mp-speed, 40s) linear infinite;
+  will-change: transform;
+}
+
+.mp-marquee[data-direction="right"] .mp-marquee-track {
+  animation-direction: reverse;
+}
+
+.mp-marquee:hover .mp-marquee-track {
+  animation-duration: calc(var(--mp-speed, 40s) * 2.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-marquee-track {
+    animation: none !important;
+  }
+  .mp-marquee {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
