@@ -177,6 +177,20 @@ function Dashboard() {
         </Panel>
       </Reveal>
 
+      <Reveal as="section" className="mt-12">
+        <SectionHeading
+          eyebrow="Always in motion"
+          title="Model spotlight"
+          description="A continuously scrolling slice of the live dataset. Hover to slow it down, click a card for full details."
+        />
+        <Marquee speed={64} gap="1rem" className="py-1">
+          {carousel.map((model) => (
+            <ModelCard key={model.id} model={model} onSelect={setSelected} />
+          ))}
+        </Marquee>
+      </Reveal>
+
+
       <section className="mt-12 grid gap-4 lg:grid-cols-3">
         <Reveal delay={0}>
           <Highlight
