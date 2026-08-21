@@ -23,6 +23,8 @@ export interface ModelTableProps {
   selectedIds?: string[];
   onToggleSelect?: (model: Model) => void;
   selectionLimitReached?: boolean;
+  /** Presentational only: staggers row entrance when the table appears. */
+  animateRows?: boolean;
 }
 
 export function ModelTable({
@@ -34,6 +36,7 @@ export function ModelTable({
   selectedIds = [],
   onToggleSelect,
   selectionLimitReached = false,
+  animateRows = false,
 }: ModelTableProps) {
   return (
     <div className="w-full overflow-x-auto">
@@ -54,14 +57,24 @@ export function ModelTable({
           </tr>
         </thead>
         <tbody>
-          {models.map((model) => {
+          {models.map((model, rowIndex) => {
             const score = valueScore(model);
             const isDerived = model.value.value == null && score != null;
             const selected = selectedIds.includes(model.id);
             return (
               <tr
                 key={model.id}
-                className="group border-b border-border/60 transition-colors last:border-0 hover:bg-surface-2/60"
+                style={
+                  animateRows
+                    ? ({ "--mp-delay": `${Math.min(rowIndex, 12) * 45}ms` } as React.CSSProperties)
+                    : undefined
+                }
+                className={cn(
+                  "group border-b border-border/60 transition-all duration-300 last:border-0",
+                  "hover:bg-surface-2/60 hover:shadow-[inset_3px_0_0_0_var(--violet)]",
+                  selected && "bg-violet/10",
+                  animateRows && "mp-enter",
+                )}
               >
                 {selectable && (
                   <td className="px-3 py-3">

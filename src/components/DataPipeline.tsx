@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowRight, Braces, Globe, Sparkles, Target, Waypoints } from "lucide-react";
 import { Panel } from "@/components/kit";
+import { Reveal } from "@/components/motion";
 
 const STEPS = [
   { label: "TokenCost", detail: "Public pricing pages", icon: Globe },
@@ -11,9 +12,9 @@ const STEPS = [
 
 export function DataPipeline() {
   return (
-    <Panel className="overflow-hidden p-6 sm:p-8">
+    <Panel className="relative overflow-hidden p-6 sm:p-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-10">
-        <div className="lg:max-w-xs">
+        <Reveal className="lg:max-w-xs" motion="left">
           <p className="mb-2 text-[11px] font-semibold tracking-[0.22em] text-violet-soft uppercase">
             Data pipeline
           </p>
@@ -24,13 +25,25 @@ export function DataPipeline() {
             Bright Data handles reliable web data extraction. ModelPulse turns that data into
             actionable model-selection intelligence.
           </p>
-        </div>
+          <p className="mt-4 text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+            Raw web data → Structured data → Analytics → Decision
+          </p>
+        </Reveal>
 
-        <ol className="flex flex-1 flex-col gap-2 lg:flex-row lg:items-stretch">
+        <ol className="relative flex flex-1 flex-col gap-2 lg:flex-row lg:items-stretch">
+          <span
+            className="mp-flow pointer-events-none absolute top-1/2 right-0 left-0 hidden h-px lg:block"
+            aria-hidden
+          />
           {STEPS.map((step, i) => (
-            <li key={step.label} className="flex flex-1 items-center gap-2 lg:flex-col lg:gap-2">
-              <div className="flex-1 rounded-xl border border-border bg-surface/60 p-3 text-center transition-colors hover:border-violet/45 lg:w-full">
-                <step.icon className="mx-auto mb-2 size-4 text-violet-soft" aria-hidden />
+            <Reveal
+              as="li"
+              key={step.label}
+              delay={i * 130}
+              className="flex flex-1 items-center gap-2 lg:flex-col lg:gap-2"
+            >
+              <div className="lift min-w-0 flex-1 rounded-xl border border-border bg-surface/60 p-3 text-center hover:border-violet/45 lg:w-full">
+                <step.icon className="mp-pulse-soft mx-auto mb-2 size-4 text-violet-soft" aria-hidden />
                 <p className="text-xs font-semibold text-foreground">{step.label}</p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">{step.detail}</p>
               </div>
@@ -46,7 +59,7 @@ export function DataPipeline() {
                   />
                 </>
               )}
-            </li>
+            </Reveal>
           ))}
         </ol>
       </div>
