@@ -335,3 +335,49 @@ function Highlight({
     </Panel>
   );
 }
+
+function ModelCard({
+  model,
+  onSelect,
+}: {
+  model: Model;
+  onSelect: (model: Model) => void;
+}) {
+  const score = valueScore(model);
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(model)}
+      className="lift group relative w-[15rem] shrink-0 overflow-hidden rounded-2xl border border-border bg-card/70 p-4 text-left backdrop-blur-sm sm:w-[17rem]"
+    >
+      <span
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-60"
+        aria-hidden
+      />
+      <p className="text-[10px] font-semibold tracking-[0.18em] text-violet-soft uppercase">
+        {model.provider}
+      </p>
+      <p className="mt-2 truncate text-sm font-semibold text-foreground" title={model.name}>
+        {model.name}
+      </p>
+      <dl className="num mt-3 space-y-1 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3">
+          <dt>Input</dt>
+          <dd className="text-foreground">{model.inputPrice.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Context</dt>
+          <dd className="text-foreground">{model.context.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Quality</dt>
+          <dd className="text-foreground">{model.quality.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Value score</dt>
+          <dd className="text-violet-soft">{score ?? "N/A"}</dd>
+        </div>
+      </dl>
+    </button>
+  );
+}
