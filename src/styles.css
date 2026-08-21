@@ -248,3 +248,202 @@
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
+
+/* ---------------------------------------------------------------
+ * Premium motion layer (presentational only)
+ * ------------------------------------------------------------- */
+
+@keyframes mp-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mp-slide-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-26px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mp-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mp-aurora {
+  0% {
+    transform: translate3d(-4%, -2%, 0) scale(1.05);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(5%, 3%, 0) scale(1.16);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-4%, -2%, 0) scale(1.05);
+    opacity: 0.75;
+  }
+}
+
+@keyframes mp-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 64px 64px;
+  }
+}
+
+@keyframes mp-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes mp-flow {
+  from {
+    background-position: -140% 0;
+  }
+  to {
+    background-position: 240% 0;
+  }
+}
+
+@keyframes mp-pulse-soft {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Reveal-on-scroll: hidden until the observer adds .is-visible */
+@utility reveal {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.reveal.is-visible {
+  animation: mp-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--mp-delay, 0ms);
+}
+
+.reveal[data-motion="left"].is-visible {
+  animation-name: mp-slide-left;
+}
+
+.reveal[data-motion="zoom"].is-visible {
+  animation-name: mp-zoom;
+  animation-duration: 0.9s;
+}
+
+/* Entrance stagger for hero children */
+@utility mp-enter {
+  animation: mp-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--mp-delay, 0ms);
+}
+
+@utility mp-aurora {
+  animation: mp-aurora 18s ease-in-out infinite;
+}
+
+@utility mp-grid {
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / 4%) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 4%) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: mp-grid-drift 24s linear infinite;
+}
+
+@utility mp-float {
+  animation: mp-float 7s ease-in-out infinite;
+}
+
+@utility mp-flow {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--violet) 65%, transparent) 45%,
+    color-mix(in oklab, var(--chart-2) 70%, transparent) 55%,
+    transparent 100%
+  );
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: mp-flow 4.5s linear infinite;
+}
+
+@utility mp-pulse-soft {
+  animation: mp-pulse-soft 3.6s ease-in-out infinite;
+}
+
+/* Shared premium hover for cards */
+@utility lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+
+  &:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: var(--glow-violet);
+  }
+}
+
+/* Route-level entrance */
+@utility page-enter {
+  animation: mp-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible,
+  .mp-enter,
+  .page-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .mp-aurora,
+  .mp-grid,
+  .mp-float,
+  .mp-flow,
+  .mp-pulse-soft {
+    animation: none !important;
+  }
+
+  .lift:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Lighter effects on small / low-power devices */
+  .mp-aurora,
+  .mp-grid,
+  .mp-float {
+    animation: none;
+  }
+}
