@@ -61,6 +61,42 @@ function Dashboard() {
     return map;
   }, [stats]);
 
+  // Marquee content — derived from the same dataset, no invented values.
+  const ribbon = useMemo(() => {
+    const items = [
+      `${stats.totalModels} AI models`,
+      `${stats.providerCount} providers`,
+      stats.averageInputPrice != null ? `Avg input ${formatPrice1M(stats.averageInputPrice)}` : null,
+      stats.medianInputPrice != null
+        ? `Median input ${formatPrice1M(stats.medianInputPrice)}`
+        : null,
+      stats.largestContext?.context.display
+        ? `Largest context ${stats.largestContext.context.display}`
+        : null,
+      stats.highestQuality?.quality.display
+        ? `Top quality ${stats.highestQuality.quality.display}`
+        : null,
+      stats.fastest?.speed.display ? `Fastest ${stats.fastest.speed.display}` : null,
+      stats.cheapestModel?.inputPrice.display
+        ? `Cheapest ${stats.cheapestModel.inputPrice.display}`
+        : null,
+      `${stats.pricedModels} priced models`,
+    ].filter((v): v is string => v != null);
+    return items;
+  }, [stats]);
+
+  const carousel = useMemo(() => {
+    const seen = new Set<string>();
+    const picked: Model[] = [];
+    for (const m of [...bestValue, ...models]) {
+      if (seen.has(m.id)) continue;
+      seen.add(m.id);
+      picked.push(m);
+      if (picked.length >= 14) break;
+    }
+    return picked;
+  }, [bestValue, models]);
+
   return (
     <div className="page-enter pt-10">
       <RefreshDataButton />
