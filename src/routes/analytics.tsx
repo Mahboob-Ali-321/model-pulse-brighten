@@ -173,7 +173,7 @@ function Analytics() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {insights.map((i) => (
-          <Panel key={i.label} className="p-4 transition-transform hover:-translate-y-0.5">
+          <Panel key={i.label} className="lift h-full p-4">
             <p className="text-[10px] font-semibold tracking-[0.16em] text-violet-soft uppercase">
               {i.label}
             </p>
@@ -295,7 +295,7 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <Panel className="p-5">
+    <Panel className="lift h-full p-5">
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p className="mt-1 mb-4 text-xs text-muted-foreground">{note}</p>
       <div className="h-64 w-full">{children}</div>

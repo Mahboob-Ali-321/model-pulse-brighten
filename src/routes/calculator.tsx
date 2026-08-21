@@ -118,7 +118,7 @@ function CalculatorPage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
-        <Panel className="h-fit p-5">
+        <Panel className="lift h-fit p-5">
           <div className="space-y-4">
             <div>
               <Label htmlFor="workload">Workload type</Label>
