@@ -121,6 +121,28 @@ function Dashboard() {
         </div>
       </section>
 
+      <section className="mt-6" aria-label="ModelPulse coverage">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/50 py-3">
+          <div
+            className="pointer-events-none absolute inset-0 -z-10 opacity-70"
+            style={{ backgroundImage: "var(--gradient-hero)" }}
+            aria-hidden
+          />
+          <Marquee speed={34} gap="0.75rem">
+            {ribbon.map((item, i) => (
+              <span
+                key={`${item}-${i}`}
+                className="num inline-flex items-center gap-2 rounded-full border border-violet/25 bg-violet/8 px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.16em] whitespace-nowrap text-violet-soft uppercase shadow-[0_0_18px_-8px_var(--violet)]"
+              >
+                <span className="size-1.5 rounded-full bg-violet" aria-hidden />
+                {item}
+              </span>
+            ))}
+          </Marquee>
+        </div>
+      </section>
+
+
       <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Reveal delay={0}>
           <Kpi
