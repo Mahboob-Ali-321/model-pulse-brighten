@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button, Panel, SectionHeading, Tag } from "@/components/kit";
 import { DataPipeline } from "@/components/DataPipeline";
 import { CountUpNumber, Reveal } from "@/components/motion";
+import { Marquee } from "@/components/Marquee";
 import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable, type BadgeKind } from "@/components/ModelTable";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
