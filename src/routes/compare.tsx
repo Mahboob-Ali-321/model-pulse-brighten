@@ -105,7 +105,7 @@ function Compare() {
   };
 
   return (
-    <div className="pt-10">
+    <div className="page-enter pt-10">
       <SectionHeading
         eyebrow="Compare"
         title="Side-by-side model comparison"

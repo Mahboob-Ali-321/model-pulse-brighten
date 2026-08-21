@@ -64,13 +64,19 @@ export function RefreshDataButton() {
 
   return (
     <div className="mb-6 flex flex-wrap items-center gap-3">
-      <Tag>
+      <Tag className="max-w-full whitespace-normal">
         <Database className="size-3" aria-hidden />
         Data sourced via Bright Data Scraper Studio
         {source === "supabase" ? " (live)" : " (snapshot)"}
       </Tag>
 
-      <Button variant="outline" onClick={handleRefresh} disabled={busy} aria-busy={busy}>
+      <Button
+        variant="outline"
+        onClick={handleRefresh}
+        disabled={busy}
+        aria-busy={busy}
+        className="w-full text-left transition-transform duration-300 hover:scale-[1.02] sm:w-auto"
+      >
         {busy ? (
           <Loader2 className="size-4 animate-spin" aria-hidden />
         ) : (

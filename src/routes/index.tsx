@@ -3,6 +3,8 @@ import { Boxes, Calculator, Compass, Gauge, Sparkles, TrendingDown } from "lucid
 import { useMemo, useState } from "react";
 import { Button, Panel, SectionHeading, Tag } from "@/components/kit";
 import { DataPipeline } from "@/components/DataPipeline";
+import { CountUpNumber, Reveal } from "@/components/motion";
+import { Marquee } from "@/components/Marquee";
 import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable, type BadgeKind } from "@/components/ModelTable";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
@@ -59,76 +61,169 @@ function Dashboard() {
     return map;
   }, [stats]);
 
+  // Marquee content — derived from the same dataset, no invented values.
+  const ribbon = useMemo(() => {
+    const items = [
+      `${stats.totalModels} AI models`,
+      `${stats.providerCount} providers`,
+      stats.averageInputPrice != null ? `Avg input ${formatPrice1M(stats.averageInputPrice)}` : null,
+      stats.medianInputPrice != null
+        ? `Median input ${formatPrice1M(stats.medianInputPrice)}`
+        : null,
+      stats.largestContext?.context.display
+        ? `Largest context ${stats.largestContext.context.display}`
+        : null,
+      stats.highestQuality?.quality.display
+        ? `Top quality ${stats.highestQuality.quality.display}`
+        : null,
+      stats.fastest?.speed.display ? `Fastest ${stats.fastest.speed.display}` : null,
+      stats.cheapestModel?.inputPrice.display
+        ? `Cheapest ${stats.cheapestModel.inputPrice.display}`
+        : null,
+      `${stats.pricedModels} priced models`,
+    ].filter((v): v is string => v != null);
+    return items;
+  }, [stats]);
+
+  const carousel = useMemo(() => {
+    const seen = new Set<string>();
+    const picked: Model[] = [];
+    for (const m of [...bestValue, ...models]) {
+      if (seen.has(m.id)) continue;
+      seen.add(m.id);
+      picked.push(m);
+      if (picked.length >= 14) break;
+    }
+    return picked;
+  }, [bestValue, models]);
+
   return (
-    <div className="pt-10">
+    <div className="page-enter pt-10">
       <RefreshDataButton />
-      <section
-        className="relative overflow-hidden rounded-3xl border border-border p-6 sm:p-12"
-        style={{ backgroundImage: "var(--gradient-hero)" }}
-      >
-        <Tag tone="violet" className="mb-6">
-          <Sparkles className="size-3" aria-hidden /> {stats.totalModels} models ·{" "}
-          {stats.providerCount} providers
-        </Tag>
-        <h1 className="max-w-3xl text-3xl leading-[1.1] font-bold tracking-tight sm:text-5xl">
+      <section className="relative isolate overflow-hidden rounded-3xl border border-border p-6 sm:p-12">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{ backgroundImage: "var(--gradient-hero)" }}
+          aria-hidden
+        />
+        <div className="mp-grid pointer-events-none absolute inset-0 -z-10 opacity-70" aria-hidden />
+        <div
+          className="mp-aurora pointer-events-none absolute -top-1/3 -left-1/4 -z-10 size-[70%] rounded-full bg-violet/25 blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="mp-float pointer-events-none absolute -right-16 -bottom-24 -z-10 size-64 rounded-full bg-chart-2/20 blur-3xl"
+          aria-hidden
+        />
+
+        <div className="mp-enter" style={{ "--mp-delay": "40ms" } as React.CSSProperties}>
+          <Tag tone="violet" className="mb-6 max-w-full whitespace-normal">
+            <Sparkles className="size-3" aria-hidden /> {stats.totalModels} models ·{" "}
+            {stats.providerCount} providers
+          </Tag>
+        </div>
+        <h1
+          className="mp-enter max-w-3xl text-[1.75rem] leading-[1.12] font-bold tracking-tight sm:text-4xl lg:text-5xl"
+          style={{ "--mp-delay": "140ms" } as React.CSSProperties}
+        >
           <span className="text-gradient">
             Find the right AI model for your workload — not just the cheapest one.
           </span>
         </h1>
-        <p className="mt-5 max-w-2xl text-sm text-muted-foreground sm:text-base">
+        <p
+          className="mp-enter mt-5 max-w-2xl text-sm text-muted-foreground sm:text-base"
+          style={{ "--mp-delay": "240ms" } as React.CSSProperties}
+        >
           Compare pricing, context, quality and performance across AI models to choose the model that
           fits your workload and budget.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/explorer">
-            <Button>
+        <div
+          className="mp-enter mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+          style={{ "--mp-delay": "340ms" } as React.CSSProperties}
+        >
+          <Link to="/explorer" className="w-full sm:w-auto">
+            <Button className="w-full transition-transform duration-300 hover:scale-[1.02] sm:w-auto">
               <Compass className="size-4" aria-hidden /> Explore all models
             </Button>
           </Link>
-          <Link to="/calculator">
-            <Button variant="outline">
+          <Link to="/calculator" className="w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="w-full transition-transform duration-300 hover:scale-[1.02] sm:w-auto"
+            >
               <Calculator className="size-4" aria-hidden /> Estimate monthly cost
             </Button>
           </Link>
         </div>
       </section>
 
-      <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Kpi
-          icon={<Boxes className="size-4" aria-hidden />}
-          label="Models tracked"
-          value={String(stats.totalModels)}
-          hint={`${stats.providerCount} providers in the dataset`}
-        />
-        <Kpi
-          icon={<TrendingDown className="size-4" aria-hidden />}
-          label="Average input price"
-          value={formatPrice1M(stats.averageInputPrice)}
-          hint={`per 1M tokens · ${stats.pricedModels} models with exact prices`}
-        />
-        <Kpi
-          icon={<Gauge className="size-4" aria-hidden />}
-          label="Highest quality"
-          value={stats.highestQuality?.name ?? "N/A"}
-          hint={
-            stats.highestQuality
-              ? `Quality index ${stats.highestQuality.quality.display} · ${stats.highestQuality.provider}`
-              : "No quality data published"
-          }
-        />
-        <Kpi
-          icon={<Sparkles className="size-4" aria-hidden />}
-          label="Cheapest model"
-          value={stats.cheapestModel?.name ?? "N/A"}
-          hint={
-            stats.cheapestModel
-              ? `${stats.cheapestModel.inputPrice.display ?? "N/A"} input · ${stats.cheapestModel.provider}`
-              : "No pricing data published"
-          }
-        />
+      <section className="mt-6" aria-label="ModelPulse coverage">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/50 py-3">
+          <div
+            className="pointer-events-none absolute inset-0 -z-10 opacity-70"
+            style={{ backgroundImage: "var(--gradient-hero)" }}
+            aria-hidden
+          />
+          <Marquee speed={34} gap="0.75rem">
+            {ribbon.map((item, i) => (
+              <span
+                key={`${item}-${i}`}
+                className="num inline-flex items-center gap-2 rounded-full border border-violet/25 bg-violet/8 px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.16em] whitespace-nowrap text-violet-soft uppercase shadow-[0_0_18px_-8px_var(--violet)]"
+              >
+                <span className="size-1.5 rounded-full bg-violet" aria-hidden />
+                {item}
+              </span>
+            ))}
+          </Marquee>
+        </div>
       </section>
 
-      <section className="mt-12">
+
+      <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Reveal delay={0}>
+          <Kpi
+            icon={<Boxes className="size-4" aria-hidden />}
+            label="Models tracked"
+            value={String(stats.totalModels)}
+            countTo={stats.totalModels}
+            hint={`${stats.providerCount} providers in the dataset`}
+          />
+        </Reveal>
+        <Reveal delay={90}>
+          <Kpi
+            icon={<TrendingDown className="size-4" aria-hidden />}
+            label="Average input price"
+            value={formatPrice1M(stats.averageInputPrice)}
+            hint={`per 1M tokens · ${stats.pricedModels} models with exact prices`}
+          />
+        </Reveal>
+        <Reveal delay={180}>
+          <Kpi
+            icon={<Gauge className="size-4" aria-hidden />}
+            label="Highest quality"
+            value={stats.highestQuality?.name ?? "N/A"}
+            hint={
+              stats.highestQuality
+                ? `Quality index ${stats.highestQuality.quality.display} · ${stats.highestQuality.provider}`
+                : "No quality data published"
+            }
+          />
+        </Reveal>
+        <Reveal delay={270}>
+          <Kpi
+            icon={<Sparkles className="size-4" aria-hidden />}
+            label="Cheapest model"
+            value={stats.cheapestModel?.name ?? "N/A"}
+            hint={
+              stats.cheapestModel
+                ? `${stats.cheapestModel.inputPrice.display ?? "N/A"} input · ${stats.cheapestModel.provider}`
+                : "No pricing data published"
+            }
+          />
+        </Reveal>
+      </section>
+
+      <Reveal as="section" className="mt-12" motion="zoom">
         <SectionHeading
           eyebrow="Ranked by value score"
           title="Best value models"
@@ -136,30 +231,50 @@ function Dashboard() {
           action={<ValueScoreInfo />}
         />
         <Panel className="overflow-hidden">
-          <ModelTable models={bestValue} badges={badges} onSelect={setSelected} />
+          <ModelTable models={bestValue} badges={badges} onSelect={setSelected} animateRows />
         </Panel>
-      </section>
+      </Reveal>
+
+      <Reveal as="section" className="mt-12">
+        <SectionHeading
+          eyebrow="Always in motion"
+          title="Model spotlight"
+          description="A continuously scrolling slice of the live dataset. Hover to slow it down, click a card for full details."
+        />
+        <Marquee speed={64} gap="1rem" className="py-1">
+          {carousel.map((model) => (
+            <ModelCard key={model.id} model={model} onSelect={setSelected} />
+          ))}
+        </Marquee>
+      </Reveal>
+
 
       <section className="mt-12 grid gap-4 lg:grid-cols-3">
-        <Highlight
-          title="Largest context"
-          model={stats.largestContext}
-          detail={
-            stats.largestContext
-              ? `${stats.largestContext.context.display} context (${formatCompact(stats.largestContext.context.value)} tokens)`
-              : "N/A"
-          }
-        />
-        <Highlight
-          title="Fastest throughput"
-          model={stats.fastest}
-          detail={stats.fastest ? `${stats.fastest.speed.display}` : "N/A"}
-        />
-        <Highlight
-          title="Best ModelPulse value"
-          model={stats.bestValue}
-          detail={stats.bestValue ? `Value score ${valueScore(stats.bestValue)}` : "N/A"}
-        />
+        <Reveal delay={0}>
+          <Highlight
+            title="Largest context"
+            model={stats.largestContext}
+            detail={
+              stats.largestContext
+                ? `${stats.largestContext.context.display} context (${formatCompact(stats.largestContext.context.value)} tokens)`
+                : "N/A"
+            }
+          />
+        </Reveal>
+        <Reveal delay={110}>
+          <Highlight
+            title="Fastest throughput"
+            model={stats.fastest}
+            detail={stats.fastest ? `${stats.fastest.speed.display}` : "N/A"}
+          />
+        </Reveal>
+        <Reveal delay={220}>
+          <Highlight
+            title="Best ModelPulse value"
+            model={stats.bestValue}
+            detail={stats.bestValue ? `Value score ${valueScore(stats.bestValue)}` : "N/A"}
+          />
+        </Reveal>
       </section>
 
       <section className="mt-12">
@@ -176,14 +291,16 @@ function Kpi({
   label,
   value,
   hint,
+  countTo,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   hint: string;
+  countTo?: number;
 }) {
   return (
-    <Panel className="p-5 transition-transform duration-200 hover:-translate-y-0.5">
+    <Panel className="lift h-full p-5">
       <div className="flex items-center gap-2 text-muted-foreground">
         <span className="grid size-7 place-items-center rounded-lg bg-violet/14 text-violet-soft">
           {icon}
@@ -191,7 +308,7 @@ function Kpi({
         <span className="text-[11px] font-semibold tracking-[0.16em] uppercase">{label}</span>
       </div>
       <p className="mt-4 truncate text-2xl font-semibold tracking-tight text-foreground" title={value}>
-        {value}
+        {countTo != null ? <CountUpNumber value={countTo} /> : value}
       </p>
       <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p>
     </Panel>
@@ -208,7 +325,7 @@ function Highlight({
   detail: string;
 }) {
   return (
-    <Panel className="p-5">
+    <Panel className="lift h-full p-5">
       <p className="text-[11px] font-semibold tracking-[0.18em] text-violet-soft uppercase">
         {title}
       </p>
@@ -216,5 +333,51 @@ function Highlight({
       <p className="text-xs text-muted-foreground">{model?.provider ?? "No data available"}</p>
       <p className="num mt-3 text-sm text-foreground">{detail}</p>
     </Panel>
+  );
+}
+
+function ModelCard({
+  model,
+  onSelect,
+}: {
+  model: Model;
+  onSelect: (model: Model) => void;
+}) {
+  const score = valueScore(model);
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(model)}
+      className="lift group relative w-[15rem] shrink-0 overflow-hidden rounded-2xl border border-border bg-card/70 p-4 text-left backdrop-blur-sm sm:w-[17rem]"
+    >
+      <span
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-60"
+        aria-hidden
+      />
+      <p className="text-[10px] font-semibold tracking-[0.18em] text-violet-soft uppercase">
+        {model.provider}
+      </p>
+      <p className="mt-2 truncate text-sm font-semibold text-foreground" title={model.name}>
+        {model.name}
+      </p>
+      <dl className="num mt-3 space-y-1 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3">
+          <dt>Input</dt>
+          <dd className="text-foreground">{model.inputPrice.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Context</dt>
+          <dd className="text-foreground">{model.context.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Quality</dt>
+          <dd className="text-foreground">{model.quality.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Value score</dt>
+          <dd className="text-violet-soft">{score ?? "N/A"}</dd>
+        </div>
+      </dl>
+    </button>
   );
 }
