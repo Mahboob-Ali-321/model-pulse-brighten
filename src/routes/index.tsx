@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button, Panel, SectionHeading, Tag } from "@/components/kit";
 import { DataPipeline } from "@/components/DataPipeline";
 import { CountUpNumber, Reveal } from "@/components/motion";
+import { Marquee } from "@/components/Marquee";
 import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable, type BadgeKind } from "@/components/ModelTable";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
@@ -59,6 +60,42 @@ function Dashboard() {
     push(stats.largestContext, "context");
     return map;
   }, [stats]);
+
+  // Marquee content — derived from the same dataset, no invented values.
+  const ribbon = useMemo(() => {
+    const items = [
+      `${stats.totalModels} AI models`,
+      `${stats.providerCount} providers`,
+      stats.averageInputPrice != null ? `Avg input ${formatPrice1M(stats.averageInputPrice)}` : null,
+      stats.medianInputPrice != null
+        ? `Median input ${formatPrice1M(stats.medianInputPrice)}`
+        : null,
+      stats.largestContext?.context.display
+        ? `Largest context ${stats.largestContext.context.display}`
+        : null,
+      stats.highestQuality?.quality.display
+        ? `Top quality ${stats.highestQuality.quality.display}`
+        : null,
+      stats.fastest?.speed.display ? `Fastest ${stats.fastest.speed.display}` : null,
+      stats.cheapestModel?.inputPrice.display
+        ? `Cheapest ${stats.cheapestModel.inputPrice.display}`
+        : null,
+      `${stats.pricedModels} priced models`,
+    ].filter((v): v is string => v != null);
+    return items;
+  }, [stats]);
+
+  const carousel = useMemo(() => {
+    const seen = new Set<string>();
+    const picked: Model[] = [];
+    for (const m of [...bestValue, ...models]) {
+      if (seen.has(m.id)) continue;
+      seen.add(m.id);
+      picked.push(m);
+      if (picked.length >= 14) break;
+    }
+    return picked;
+  }, [bestValue, models]);
 
   return (
     <div className="page-enter pt-10">
@@ -120,6 +157,28 @@ function Dashboard() {
         </div>
       </section>
 
+      <section className="mt-6" aria-label="ModelPulse coverage">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card/50 py-3">
+          <div
+            className="pointer-events-none absolute inset-0 -z-10 opacity-70"
+            style={{ backgroundImage: "var(--gradient-hero)" }}
+            aria-hidden
+          />
+          <Marquee speed={34} gap="0.75rem">
+            {ribbon.map((item, i) => (
+              <span
+                key={`${item}-${i}`}
+                className="num inline-flex items-center gap-2 rounded-full border border-violet/25 bg-violet/8 px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.16em] whitespace-nowrap text-violet-soft uppercase shadow-[0_0_18px_-8px_var(--violet)]"
+              >
+                <span className="size-1.5 rounded-full bg-violet" aria-hidden />
+                {item}
+              </span>
+            ))}
+          </Marquee>
+        </div>
+      </section>
+
+
       <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Reveal delay={0}>
           <Kpi
@@ -175,6 +234,20 @@ function Dashboard() {
           <ModelTable models={bestValue} badges={badges} onSelect={setSelected} animateRows />
         </Panel>
       </Reveal>
+
+      <Reveal as="section" className="mt-12">
+        <SectionHeading
+          eyebrow="Always in motion"
+          title="Model spotlight"
+          description="A continuously scrolling slice of the live dataset. Hover to slow it down, click a card for full details."
+        />
+        <Marquee speed={64} gap="1rem" className="py-1">
+          {carousel.map((model) => (
+            <ModelCard key={model.id} model={model} onSelect={setSelected} />
+          ))}
+        </Marquee>
+      </Reveal>
+
 
       <section className="mt-12 grid gap-4 lg:grid-cols-3">
         <Reveal delay={0}>
@@ -260,5 +333,51 @@ function Highlight({
       <p className="text-xs text-muted-foreground">{model?.provider ?? "No data available"}</p>
       <p className="num mt-3 text-sm text-foreground">{detail}</p>
     </Panel>
+  );
+}
+
+function ModelCard({
+  model,
+  onSelect,
+}: {
+  model: Model;
+  onSelect: (model: Model) => void;
+}) {
+  const score = valueScore(model);
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(model)}
+      className="lift group relative w-[15rem] shrink-0 overflow-hidden rounded-2xl border border-border bg-card/70 p-4 text-left backdrop-blur-sm sm:w-[17rem]"
+    >
+      <span
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet to-transparent opacity-60"
+        aria-hidden
+      />
+      <p className="text-[10px] font-semibold tracking-[0.18em] text-violet-soft uppercase">
+        {model.provider}
+      </p>
+      <p className="mt-2 truncate text-sm font-semibold text-foreground" title={model.name}>
+        {model.name}
+      </p>
+      <dl className="num mt-3 space-y-1 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between gap-3">
+          <dt>Input</dt>
+          <dd className="text-foreground">{model.inputPrice.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Context</dt>
+          <dd className="text-foreground">{model.context.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Quality</dt>
+          <dd className="text-foreground">{model.quality.display ?? "N/A"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <dt>Value score</dt>
+          <dd className="text-violet-soft">{score ?? "N/A"}</dd>
+        </div>
+      </dl>
+    </button>
   );
 }
