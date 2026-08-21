@@ -3,6 +3,7 @@ import { Boxes, Calculator, Compass, Gauge, Sparkles, TrendingDown } from "lucid
 import { useMemo, useState } from "react";
 import { Button, Panel, SectionHeading, Tag } from "@/components/kit";
 import { DataPipeline } from "@/components/DataPipeline";
+import { CountUpNumber, Reveal } from "@/components/motion";
 import { ModelDetail } from "@/components/ModelDetail";
 import { ModelTable, type BadgeKind } from "@/components/ModelTable";
 import { ValueScoreInfo } from "@/components/ValueScoreInfo";
@@ -217,14 +218,16 @@ function Kpi({
   label,
   value,
   hint,
+  countTo,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   hint: string;
+  countTo?: number;
 }) {
   return (
-    <Panel className="p-5 transition-transform duration-200 hover:-translate-y-0.5">
+    <Panel className="lift h-full p-5">
       <div className="flex items-center gap-2 text-muted-foreground">
         <span className="grid size-7 place-items-center rounded-lg bg-violet/14 text-violet-soft">
           {icon}
@@ -232,7 +235,7 @@ function Kpi({
         <span className="text-[11px] font-semibold tracking-[0.16em] uppercase">{label}</span>
       </div>
       <p className="mt-4 truncate text-2xl font-semibold tracking-tight text-foreground" title={value}>
-        {value}
+        {countTo != null ? <CountUpNumber value={countTo} /> : value}
       </p>
       <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p>
     </Panel>
@@ -249,7 +252,7 @@ function Highlight({
   detail: string;
 }) {
   return (
-    <Panel className="p-5">
+    <Panel className="lift h-full p-5">
       <p className="text-[11px] font-semibold tracking-[0.18em] text-violet-soft uppercase">
         {title}
       </p>
